@@ -3,7 +3,7 @@
 
 - 💬 Ask me about **linux, kubernetes,aws,terraform,jenkins & security**
 
-- 📫 How to reach me **linuxcares@gmail.com**
+- 📫 You can reach me at linuxcares@gmail.com
 
 <h3 align="left">Connect with me:</h3>
 <p align="left">
