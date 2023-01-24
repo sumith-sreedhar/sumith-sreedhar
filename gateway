@@ -1,0 +1,80 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: yelb-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 443
+        name: https-443
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: "tls-secret"
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: my-service1-vs
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - yelb-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /vote
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        host: vote.vote2.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: my-service1-vs2
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - yelb-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /demo
+    route:
+    - destination:
+        host: demo.demo.svc.cluster.local
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: yelb
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - yelb-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /yelb
+    route:
+    - destination:
+        host: vote.vote2.svc.cluster.local
+        port:
+          number: 5000
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: yelb-ui.default.svc.cluster.local
+        port:
+          number: 80
