@@ -1,0 +1,53 @@
+root@ip-172-31-51-238:~# kubectl get ingress gw-ingress -n istio-system -o yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/actions.ssl-redirect: "{\n  \"Type\": \"redirect\",
+      \n  \"RedirectConfig\": { \n    \"Protocol\": \"HTTPS\", \n    \"Port\": \"443\",
+      \n    \"StatusCode\": \"HTTP_301\"\n  }\n}\n"
+    alb.ingress.kubernetes.io/backend-protocol: HTTPS
+    alb.ingress.kubernetes.io/certificate-arn: |
+      arn:aws:acm:us-east-1:579615417086:certificate/8b5b822f-55d1-4912-8b38-6835490c2739
+    alb.ingress.kubernetes.io/healthcheck-path: /healthz/ready
+    alb.ingress.kubernetes.io/healthcheck-port: status-port
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    kubernetes.io/ingress.class: alb
+    meta.helm.sh/release-name: alb-istio-ingress
+    meta.helm.sh/release-namespace: default
+  creationTimestamp: "2023-01-18T06:02:43Z"
+  finalizers:
+  - ingress.k8s.aws/resources
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: gw-ingress
+  namespace: istio-system
+  resourceVersion: "1172272"
+  uid: fb4e6af2-1488-49cd-bc66-6024cc6557f1
+spec:
+  rules:
+  - host: alta.co
+    http:
+      paths:
+      - backend:
+          service:
+            name: ssl-redirect
+            port:
+              name: use-annotation
+        path: /
+        pathType: Prefix
+      - backend:
+          service:
+            name: istio-ingressgateway
+            port:
+              number: 443
+        path: /
+        pathType: Prefix
+status:
+  loadBalancer:
+    ingress:
+    - hostname: k8s-istiosys-gwingres-a8a378193b-1170466525.us-east-1.elb.amazonaws.com
+root@ip-172-31-51-238:~#
